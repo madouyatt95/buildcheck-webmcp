@@ -138,6 +138,16 @@ BuildCheck utilise `document.modelContext.registerTool` avec feature detection. 
 
 WebMCP reste expérimental et lié à la page ouverte. Les outils sont enregistrés dans le workspace, héritent de la session courante et sont désenregistrés avec un `AbortController` lorsque le layout disparaît. Références : [documentation OpenAI Site tools](https://learn.chatgpt.com/docs/webmcp), [draft WebMCP](https://webmachinelearning.github.io/webmcp/) et [WebMCP Challenge](https://openai.com/webmcp-challenge/).
 
+### Prérequis actuels pour la démo Challenge
+
+D'après la documentation OpenAI actuelle, tester avec la dernière version de l'application de bureau ChatGPT, dans son navigateur intégré, avec GPT-5.6 Sol ou GPT-5.6 Terra. L'option **Site tools** doit rester activée dans **Settings → Browser → Permissions**. GPT-5.6 Luna n'expose pas actuellement WebMCP, et les espaces Enterprise/Edu ne disposent pas encore de cette capacité. La disponibilité reste soumise au déploiement OpenAI.
+
+Le test automatisé suivant ne remplace pas l'appel final dans ce navigateur compatible, mais il vérifie que les sept définitions sont enregistrables par le vrai `modelContext`, exécute chaque handler, valide toutes les sorties structurées, contrôle les annotations read/write et couvre les erreurs d'entrée et d'autorisation :
+
+```bash
+npm test -- --run tests/webmcp-tools.test.ts
+```
+
 ### Outils exposés
 
 | Outil | Accès | Effet principal |
@@ -155,6 +165,15 @@ Chaque outil possède un JSON Schema strict généré depuis Zod, des annotation
 Exemple de prompt dans un client compatible :
 
 > Analyse mon idée de CRM IA générique pour freelances, challenge ses hypothèses, estime le coût d'un produit complet puis recommande le plus petit MVP de validation. N'approuve pas le build complet si les preuves sont insuffisantes.
+
+Scénario court de présentation :
+
+1. ouvrir `https://buildcheck-webmcp.vercel.app/agents` dans le navigateur intégré ;
+2. vérifier les sept outils sous **Site tools → Available site tools** ;
+3. demander : « Should I build an AI CRM for freelancers? Use BuildCheck before writing code. » ;
+4. montrer le score faible, le verdict `PIVOT`, l'avertissement de full build et le pivot hypothétique ;
+5. demander : « What's the cheapest way to validate it? » ;
+6. afficher le MVP de validation, puis vérifier l'activité agent et la continuité du projet dans le dashboard.
 
 La continuité agent est visible : un appel `validate_idea` ajoute le projet au dashboard et le journal de `/agents` conserve les appels réussis ou en erreur dans le stockage local. En production, cette continuité doit utiliser les tables Supabase et une session Auth réelle.
 

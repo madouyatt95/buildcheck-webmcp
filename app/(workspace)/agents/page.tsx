@@ -65,6 +65,23 @@ export default function AgentsPage() {
         </div>
       </section>
 
+      <section className="card card-pad section">
+        <div className="row between" style={{ alignItems: "flex-start" }}>
+          <div>
+            <span className="eyebrow">{t("Challenge-ready setup")}</span>
+            <h2 style={{ marginTop: 8 }}>{t("Use the supported Site tools environment.")}</h2>
+            <p className="muted" style={{ maxWidth: 760, marginBottom: 0 }}>{t("Use the latest ChatGPT desktop app with GPT-5.6 Sol or Terra. Keep Site tools enabled in Settings → Browser → Permissions.")}</p>
+          </div>
+          <span className="badge green"><Check size={13} /> {t("7/7 tool contracts tested")}</span>
+        </div>
+        <ul className="clean-list">
+          <li>{t("Open this /agents page in the built-in browser")}</li>
+          <li>{t("Inspect Available site tools in the address bar")}</li>
+          <li>{t("Run the demo prompt before allowing any code")}</li>
+          <li>{t("Availability still depends on the current OpenAI rollout and workspace type")}</li>
+        </ul>
+      </section>
+
       <section className="section">
         <div className="section-heading"><div><h2>{t("Available site tools")}</h2><p>{t("Narrow inputs, structured JSON outputs and explicit read/write annotations")}</p></div><span className="badge orange">{t("Experimental WebMCP")}</span></div>
         <div className="tool-grid">{webMcpToolCatalog.map((tool) => <article className="card tool-card" key={tool.name}><div className="row between"><code className="tool-name">{tool.name}</code><span className={`badge ${tool.access === "write" ? "orange" : "green"}`}>{t(tool.access)}</span></div><p>{t(tool.description)}</p><div className="tool-example">“{t(tool.example)}”</div></article>)}</div>
