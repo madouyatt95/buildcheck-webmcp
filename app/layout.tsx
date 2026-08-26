@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { DemoStoreProvider } from "@/components/demo-store";
 import { PwaRegister } from "@/components/pwa-register";
+import { LanguageProvider } from "@/components/language-provider";
 
 export const metadata: Metadata = {
   title: { default: "BuildCheck — Stop building SaaS nobody wants", template: "%s · BuildCheck" },
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
       <body>
-        <DemoStoreProvider>{children}</DemoStoreProvider>
+        <LanguageProvider><DemoStoreProvider>{children}</DemoStoreProvider></LanguageProvider>
         <PwaRegister />
       </body>
     </html>

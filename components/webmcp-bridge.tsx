@@ -23,11 +23,17 @@ import {
 import { getLatestAnalysis, getOwnedProject } from "@/lib/services/project-service";
 import { validationService } from "@/lib/services/validation-service";
 import { DemoRateLimiter } from "@/lib/security/rate-limit";
+import { useLanguage } from "@/components/language-provider";
 
 const limiter = new DemoRateLimiter({ validate_idea: 10, roast_idea: 20, find_opportunities: 30 });
 
-function jsonSchema(schema: z.ZodType): Record<string, unknown> {
-  return z.toJSONSchema(schema) as Record<string, unknown>;
+function jsonSchema(schema: z.ZodType, translate: (source: string) => string): Record<string, unknown> {
+  const localize = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(localize);
+    if (!value || typeof value !== "object") return value;
+    return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([key, item]) => [key, key === "description" && typeof item === "string" ? translate(item) : localize(item)]));
+  };
+  return localize(z.toJSONSchema(schema)) as Record<string, unknown>;
 }
 
 function parseOrThrow<T>(schema: z.ZodType<T>, input: unknown): T {
@@ -42,6 +48,7 @@ function ideaInput(idea: string) {
 
 export function WebMcpBridge() {
   const store = useDemoStore();
+  const { t } = useLanguage();
   const state = useRef(store);
 
   useEffect(() => {
@@ -83,9 +90,9 @@ export function WebMcpBridge() {
     const registrations: WebMcpTool[] = [
       {
         name: "validate_idea",
-        title: "Validate an idea",
-        description: "Analyze and save an idea in the signed-in BuildCheck workspace. Returns structured scores, evidence provenance, cost ranges, risks, and the recommended minimum next action. External lookup occurs only when allow_external_lookup is explicitly true; otherwise configured sources remain mock-only.",
-        inputSchema: jsonSchema(validateIdeaInputSchema),
+        title: t("Validate an idea"),
+        description: t("Analyze and save an idea in the signed-in BuildCheck workspace. Returns structured scores, evidence provenance, cost ranges, risks, and the recommended minimum next action. External lookup occurs only when allow_external_lookup is explicitly true; otherwise configured sources remain mock-only."),
+        inputSchema: jsonSchema(validateIdeaInputSchema, t),
         annotations: { readOnlyHint: false, untrustedContentHint: true },
         execute: async (raw) => {
           const input = parseOrThrow(validateIdeaInputSchema, raw);
@@ -97,9 +104,9 @@ export function WebMcpBridge() {
       },
       {
         name: "roast_idea",
-        title: "Roast an idea",
-        description: "Challenge a project owned by the signed-in user or an idea supplied directly. Evidence-backed risks and hypothetical pivots are labeled separately.",
-        inputSchema: jsonSchema(projectOrIdeaInputSchema),
+        title: t("Roast an idea"),
+        description: t("Challenge a project owned by the signed-in user or an idea supplied directly. Evidence-backed risks and hypothetical pivots are labeled separately."),
+        inputSchema: jsonSchema(projectOrIdeaInputSchema, t),
         annotations: untrustedRead,
         execute: async (raw) => {
           const input = parseOrThrow(projectOrIdeaInputSchema, raw);
@@ -109,9 +116,9 @@ export function WebMcpBridge() {
       },
       {
         name: "get_project_analysis",
-        title: "Get project analysis",
-        description: "Read the latest analysis for a BuildCheck project owned by the signed-in user. Unknown and unauthorized IDs return the same generic error.",
-        inputSchema: jsonSchema(projectIdInputSchema),
+        title: t("Get project analysis"),
+        description: t("Read the latest analysis for a BuildCheck project owned by the signed-in user. Unknown and unauthorized IDs return the same generic error."),
+        inputSchema: jsonSchema(projectIdInputSchema, t),
         annotations: untrustedRead,
         execute: async (raw) => {
           const input = parseOrThrow(projectIdInputSchema, raw);
@@ -120,9 +127,9 @@ export function WebMcpBridge() {
       },
       {
         name: "generate_validation_mvp",
-        title: "Generate validation MVP",
-        description: "Return the smallest testable product, explicit exclusions, success metrics and a validation sequence for a project or idea.",
-        inputSchema: jsonSchema(projectOrIdeaInputSchema),
+        title: t("Generate validation MVP"),
+        description: t("Return the smallest testable product, explicit exclusions, success metrics and a validation sequence for a project or idea."),
+        inputSchema: jsonSchema(projectOrIdeaInputSchema, t),
         annotations: untrustedRead,
         execute: async (raw) => {
           const input = parseOrThrow(projectOrIdeaInputSchema, raw);
@@ -132,9 +139,9 @@ export function WebMcpBridge() {
       },
       {
         name: "estimate_build_cost",
-        title: "Estimate build cost",
-        description: "Return directional hour and AI-token ranges. Estimates are scope heuristics, never exact usage measurements.",
-        inputSchema: jsonSchema(projectOrIdeaInputSchema),
+        title: t("Estimate build cost"),
+        description: t("Return directional hour and AI-token ranges. Estimates are scope heuristics, never exact usage measurements."),
+        inputSchema: jsonSchema(projectOrIdeaInputSchema, t),
         annotations: untrustedRead,
         execute: async (raw) => {
           const input = parseOrThrow(projectOrIdeaInputSchema, raw);
@@ -144,9 +151,9 @@ export function WebMcpBridge() {
       },
       {
         name: "find_opportunities",
-        title: "Find opportunities",
-        description: "Filter BuildCheck opportunities by category, audience, maximum complexity and minimum score. Results are explicitly marked as demo data.",
-        inputSchema: jsonSchema(findOpportunitiesInputSchema),
+        title: t("Find opportunities"),
+        description: t("Filter BuildCheck opportunities by category, audience, maximum complexity and minimum score. Results are explicitly marked as demo data."),
+        inputSchema: jsonSchema(findOpportunitiesInputSchema, t),
         annotations: untrustedRead,
         execute: async (raw) => {
           const input = parseOrThrow(findOpportunitiesInputSchema, raw);
@@ -155,9 +162,9 @@ export function WebMcpBridge() {
       },
       {
         name: "evaluate_before_build",
-        title: "Evaluate before build",
-        description: "Run BuildCheck's pre-build guard for a project or idea. Advises rather than blocks, and returns a structured full-build warning plus a smaller alternative when needed.",
-        inputSchema: jsonSchema(evaluateBeforeBuildInputSchema),
+        title: t("Evaluate before build"),
+        description: t("Run BuildCheck's pre-build guard for a project or idea. Advises rather than blocks, and returns a structured full-build warning plus a smaller alternative when needed."),
+        inputSchema: jsonSchema(evaluateBeforeBuildInputSchema, t),
         annotations: untrustedRead,
         execute: async (raw) => {
           const input = parseOrThrow(evaluateBeforeBuildInputSchema, raw);
@@ -177,7 +184,7 @@ export function WebMcpBridge() {
       .catch((error: unknown) => window.dispatchEvent(new CustomEvent("buildcheck:webmcp-status", { detail: { supported: true, registered: 0, error: error instanceof Error ? error.message : "Registration failed" } })));
 
     return () => controller.abort();
-  }, []);
+  }, [t]);
 
   return null;
 }

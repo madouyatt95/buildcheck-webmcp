@@ -6,9 +6,10 @@ import { useDemoStore } from "@/components/demo-store";
 import { PageLoading } from "@/components/loading-state";
 import { VerdictBadge } from "@/components/verdict-badge";
 import { demoOpportunities } from "@/lib/demo/seed";
+import { useLanguage } from "@/components/language-provider";
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(new Date(value));
+function formatDate(value: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" }).format(new Date(value));
 }
 
 function formatTokens(value: number) {
@@ -17,6 +18,7 @@ function formatTokens(value: number) {
 
 export default function DashboardPage() {
   const { projects, profile, loading } = useDemoStore();
+  const { t, locale, localeCode } = useLanguage();
   if (loading) return <PageLoading />;
 
   const current = projects.flatMap((project) => project.analyses.slice(0, 1));
@@ -38,26 +40,26 @@ export default function DashboardPage() {
     <div className="page">
       <header className="page-heading">
         <div>
-          <span className="eyebrow">Decision workspace</span>
-          <h1>Good morning, {profile.firstName}.</h1>
-          <p className="subtitle">Five ideas on the table. Only the evidence gets a vote.</p>
+          <span className="eyebrow">{t("Decision workspace")}</span>
+          <h1>{t(`Good morning, ${profile.firstName}.`)}</h1>
+          <p className="subtitle">{locale === "fr" ? `${projects.length} idées sur la table. Seules les preuves ont voix au chapitre.` : `${projects.length} ideas on the table. Only the evidence gets a vote.`}</p>
         </div>
-        <Link href="/validate" className="button primary wide"><Plus /> Validate an idea</Link>
+        <Link href="/validate" className="button primary wide"><Plus /> {t("Validate an idea")}</Link>
       </header>
 
-      <section className="stat-grid" aria-label="Workspace statistics">
+      <section className="stat-grid" aria-label={t("Workspace statistics")}>
         {stats.map((stat) => (
           <article className="card stat-card" key={stat.label}>
-            <div className="stat-top"><span>{stat.label}</span><stat.icon /></div>
+            <div className="stat-top"><span>{t(stat.label)}</span><stat.icon /></div>
             <div className="stat-value">{stat.value}</div>
-            <div className="stat-meta">{stat.meta}</div>
+            <div className="stat-meta">{t(stat.meta)}</div>
           </article>
         ))}
       </section>
 
       <div className="dashboard-grid section">
         <section>
-          <div className="section-heading"><div><h2>Recent projects</h2><p>Latest analysis for every active idea</p></div><Link href="/projects" className="button ghost">View all <ArrowRight /></Link></div>
+          <div className="section-heading"><div><h2>{t("Recent projects")}</h2><p>{t("Latest analysis for every active idea")}</p></div><Link href="/projects" className="button ghost">{t("View all")} <ArrowRight /></Link></div>
           <div className="card">
             {projects.slice(0, 5).map((project) => {
               const analysis = project.analyses[0];
@@ -68,11 +70,11 @@ export default function DashboardPage() {
                 <Link href={`/projects/${project.id}`} className="project-row" key={project.id}>
                   <div className="project-title">
                     <span className="project-icon">{project.name.slice(0, 1)}</span>
-                    <div><strong>{project.name}</strong><span>{project.tagline}</span></div>
+                    <div><strong>{t(project.name)}</strong><span>{t(project.tagline)}</span></div>
                   </div>
                   <span className="score-text">{analysis.buildScore}<span className="tiny"> / 100</span></span>
                   <VerdictBadge verdict={analysis.verdict} />
-                  <span className={trend < 0 ? "trend down" : "trend"}>{trend ? `${trend > 0 ? "+" : ""}${trend}` : formatDate(project.updatedAt)}</span>
+                  <span className={trend < 0 ? "trend down" : "trend"}>{trend ? `${trend > 0 ? "+" : ""}${trend}` : formatDate(project.updatedAt, localeCode)}</span>
                 </Link>
               );
             })}
@@ -80,13 +82,13 @@ export default function DashboardPage() {
         </section>
 
         <aside className="stack">
-          <div className="section-heading"><div><h2>Opportunities for you</h2><p>Curated demo dataset</p></div></div>
+          <div className="section-heading"><div><h2>{t("Opportunities for you")}</h2><p>{t("Curated demo dataset")}</p></div></div>
           <div className="opportunity-list">
             {demoOpportunities.slice(0, 3).map((opportunity) => (
               <Link href={`/discover?focus=${opportunity.slug}`} className="card hoverable opportunity-mini" key={opportunity.id}>
-                <div className="row between"><span className="badge">{opportunity.category}</span><strong className="score-text">{opportunity.opportunityScore}</strong></div>
-                <h3 style={{ marginTop: 12 }}>{opportunity.title}</h3>
-                <p>{opportunity.audience}</p>
+                <div className="row between"><span className="badge">{t(opportunity.category)}</span><strong className="score-text">{opportunity.opportunityScore}</strong></div>
+                <h3 style={{ marginTop: 12 }}>{t(opportunity.title)}</h3>
+                <p>{t(opportunity.audience)}</p>
                 <div className="progress-track"><span style={{ width: `${opportunity.opportunityScore}%` }} /></div>
               </Link>
             ))}
@@ -96,10 +98,10 @@ export default function DashboardPage() {
 
       <section className="section">
         <article className="card token-card">
-          <div className="row between"><span className="eyebrow">Token economics</span><TrendingUp size={18} color="var(--green)" /></div>
+          <div className="row between"><span className="eyebrow">{t("Token economics")}</span><TrendingUp size={18} color="var(--green)" /></div>
           <div className="token-value">{formatTokens(savedTokens || 2_400_000)}</div>
-          <h3>estimated coding tokens protected</h3>
-          <p className="muted" style={{ maxWidth: 540, fontSize: 12 }}>By deferring weak scopes and testing their riskiest assumption first. This is an implementation estimate, not provider billing data.</p>
+          <h3>{t("estimated coding tokens protected")}</h3>
+          <p className="muted" style={{ maxWidth: 540, fontSize: 12 }}>{t("By deferring weak scopes and testing their riskiest assumption first. This is an implementation estimate, not provider billing data.")}</p>
         </article>
       </section>
     </div>
