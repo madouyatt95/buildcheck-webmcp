@@ -12,7 +12,7 @@ export const providerRegistry = {
     { id: "stack-exchange", label: "Stack Exchange API", status: "available · server opt-in" },
     { id: "apple-app-store", label: "Apple App Store Search", status: "available · server opt-in" },
     { id: "mastodon", label: "Mastodon public hashtags", status: "available · server opt-in" },
-    { id: "bluesky", label: "Bluesky public search", status: "available · server opt-in" },
+    { id: "bluesky", label: "Bluesky public search", status: "available · upstream may require auth" },
     { id: "rss", label: "RSS/Atom configured feeds", status: "available · feed config required" },
     { id: "npm", label: "npm public registry", status: "available · server opt-in" },
     { id: "reddit", label: "Reddit", status: "not connected" },

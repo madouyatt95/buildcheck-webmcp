@@ -70,6 +70,7 @@ const french: Record<string, string> = {
   "active": "actif",
   "adapter planned": "adaptateur prévu",
   "available · server opt-in": "disponible · activation côté serveur",
+  "available · upstream may require auth": "disponible · la source peut exiger une authentification",
   "available · feed config required": "disponible · configuration des flux requise",
   "not connected": "non connecté",
 

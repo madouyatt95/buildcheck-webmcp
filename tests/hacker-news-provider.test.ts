@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { HackerNewsDataSourceProvider } from "@/lib/providers/hacker-news-data-source-provider";
 import { MockAIProvider } from "@/lib/providers/mock-ai-provider";
-import { effectiveServerDataSource } from "@/lib/providers/server-provider-factory";
+import { effectiveServerDataSource, liveSourceCount } from "@/lib/providers/server-provider-factory";
 
 const idea = {
   name: "Invoice follow-up assistant",
@@ -25,6 +25,13 @@ describe("HackerNewsDataSourceProvider", () => {
     expect(effectiveServerDataSource("public-web", false)).toBe("mock");
     expect(effectiveServerDataSource("public-web", true)).toBe("public-web");
     expect(effectiveServerDataSource("mock", true)).toBe("mock");
+  });
+
+  it("counts RSS as configured only when an administrator selected a feed", () => {
+    expect(liveSourceCount("public-web", "")).toBe(7);
+    expect(liveSourceCount("rss", "")).toBe(0);
+    expect(liveSourceCount("public-web", "https://example.com/feed.xml")).toBe(8);
+    expect(liveSourceCount("rss", "https://example.com/feed.xml")).toBe(1);
   });
 
   it("maps live public discussions to observed, traceable signals", async () => {

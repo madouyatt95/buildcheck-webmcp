@@ -24,5 +24,6 @@ describe("optional French localization", () => {
     expect(translateText("8 public connectors", "fr")).toBe("8 connecteurs publics");
     expect(translateText("RSS/Atom configured feeds", "fr")).toBe("Flux RSS/Atom configurés");
     expect(translateText("available · feed config required", "fr")).toContain("configuration des flux requise");
+    expect(translateText("available · upstream may require auth", "fr")).toContain("peut exiger une authentification");
   });
 });

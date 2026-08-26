@@ -56,9 +56,11 @@ function configuredList(value: string | undefined): string[] {
   return (value || "").split(/[\n,]/).map((item) => item.trim()).filter(Boolean);
 }
 
-export function liveSourceCount(source: ServerDataSourceId): number {
+export function liveSourceCount(source: ServerDataSourceId, rssFeedUrls = process.env.RSS_FEED_URLS): number {
   if (source === "hacker-news+github") return 2;
-  if (source === "public-web") return 8;
+  const rssConfigured = configuredList(rssFeedUrls).length > 0;
+  if (source === "public-web") return 7 + Number(rssConfigured);
+  if (source === "rss") return Number(rssConfigured);
   return source === "mock" ? 0 : 1;
 }
 
