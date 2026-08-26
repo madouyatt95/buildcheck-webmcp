@@ -64,7 +64,7 @@ UI Next.js / Agent WebMCP / API HTTP
                 │
  AIProvider / DataSourceProvider
                 │
-      mock actif / HN optionnel
+ mock actif / 8 sources publiques optionnelles
 ```
 
 Les points d'entrée UI, HTTP et WebMCP appellent les mêmes services. Aucune règle de score n'est dupliquée dans un composant ou dans un outil agent.
@@ -107,21 +107,34 @@ Deux contrats isolent le moteur :
 - `AIProvider` : synthèse, roast, MVP, pivots et résumé ;
 - `DataSourceProvider` : collecte normalisée de signaux et concurrents.
 
-Le registre garde `mock` comme défaut et expose deux adapters réels optionnels : Hacker News via la [HN Search API](https://hn.algolia.com/api) et GitHub Issues via la [REST Search API](https://docs.github.com/en/rest/search/search#search-issues-and-pull-requests). OpenAI, Anthropic, Gemini, Reddit, Product Hunt et les plateformes d'avis restent `planned` ou `not connected`.
+Le registre garde `mock` comme défaut et expose huit adapters publics interchangeables :
+
+- Hacker News via la [HN Search API](https://hn.algolia.com/api) ;
+- GitHub Issues via la [REST Search API](https://docs.github.com/en/rest/search/search#search-issues-and-pull-requests) ;
+- Stack Exchange via la [Search API v2.3](https://api.stackexchange.com/docs/search-excerpts) ;
+- Apple App Store via l'[iTunes Search API](https://performance-partners.apple.com/search-api) ;
+- Mastodon via les timelines publiques de hashtags des instances configurées ;
+- Bluesky via la recherche publique AppView ;
+- RSS/Atom via une liste fermée de flux HTTPS choisie par l'administrateur ;
+- npm via la recherche du registre public.
+
+OpenAI, Anthropic, Gemini, Reddit, Product Hunt et les plateformes d'avis restent `planned` ou `not connected`.
 
 Activation locale de cette première source :
 
 ```bash
-DATA_SOURCE_PROVIDER=hacker-news+github npm run dev
+DATA_SOURCE_PROVIDER=public-web npm run dev
 ```
 
-L'activation serveur rend les sources disponibles mais ne transmet encore rien. L'utilisateur doit cocher **Use live Hacker News + GitHub Issues evidence**, ou un agent doit envoyer `allow_external_lookup: true`. Sans ce consentement par projet, l'en-tête reste `mock-external-consent-required` et l'analyse utilise les mocks.
+L'activation serveur rend les sources disponibles mais ne transmet encore rien. L'utilisateur doit cocher **Use live evidence from 8 public connectors**, ou un agent doit envoyer `allow_external_lookup: true`. Sans ce consentement par projet, l'en-tête reste `mock-external-consent-required` et l'analyse utilise les mocks.
 
-Après consentement, chaque provider transmet uniquement trois mots-clés dérivés et examine au maximum 20 résultats sur une fenêtre de deux ans, avec un timeout de 4,5 secondes. Il exige le sujet principal et au moins un terme du problème, classe la pertinence puis conserve huit candidats au maximum. L'agrégateur limite ensuite chaque source à six preuves, douze au total, afin qu'une communauté ne domine pas artificiellement le score. Les extraits gardent leur URL publique, `provenance: observed`, `isDemo: false` et une fiabilité plafonnée, car les discussions restent anecdotiques. Aucun concurrent ni canal de distribution n'est inventé lorsque les sources ne les établissent pas.
+Après consentement, les adapters transmettent au maximum trois mots-clés dérivés — jamais l'analyse complète — et imposent un timeout de 4,5 secondes. Chaque résultat doit contenir le sujet principal et au moins un terme secondaire avant d'être retenu. L'agrégateur limite chaque source à trois preuves et l'ensemble à vingt-quatre, afin qu'une communauté ne domine pas artificiellement le score. Les extraits gardent leur URL publique, `provenance: observed`, `isDemo: false` et une fiabilité plafonnée. Aucun concurrent ni canal de distribution n'est inventé lorsque les sources ne l'établissent pas.
 
-Une panne partielle conserve uniquement les preuves de la source live restante. Si toutes les sources sont indisponibles ou renvoient un format invalide, l'analyse bascule une seule fois sur les scénarios mockés et porte explicitement `evidenceMeta.mode: fallback`. Le projet Algolia HN Search étant archivé côté code source depuis février 2026, cet adapter doit rester bêta et surveillé ; une ingestion interne depuis l'[API HN Firebase officielle](https://github.com/HackerNews/API) est l'alternative de production si sa disponibilité devient insuffisante.
+Les métadonnées App Store et npm prouvent surtout l'existence et l'adoption relative d'alternatives ; elles ne prouvent ni le revenu ni la volonté de payer. Les publications Mastodon et Bluesky sont des anecdotes publiques, pas un échantillon représentatif. Stack Exchange est biaisé vers les publics techniques. RSS n'est jamais une recherche générale : l'adapter n'appelle que les cinq flux HTTPS maximum renseignés dans `RSS_FEED_URLS`, et reste explicitement indisponible si cette variable est vide.
 
-GitHub fonctionne sans authentification pour les données publiques, avec une limite plus basse. Un `GITHUB_TOKEN` serveur facultatif relève les limites applicables ; il n'est jamais exposé au navigateur et la recherche reste en lecture seule. La Search API possède ses propres limites, donc ce connecteur doit être protégé par un rate limiter partagé avant un usage SaaS important. Voir les [limites REST GitHub](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) et l'[authentification REST](https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api).
+Une panne partielle conserve uniquement les preuves des sources live restantes et liste les adapters indisponibles. Si toutes les sources sont indisponibles ou renvoient un format invalide, l'analyse bascule une seule fois sur les scénarios mockés et porte explicitement `evidenceMeta.mode: fallback`. Le projet Algolia HN Search étant archivé côté code source depuis février 2026, cet adapter doit rester bêta et surveillé ; une ingestion interne depuis l'[API HN Firebase officielle](https://github.com/HackerNews/API) est l'alternative de production si sa disponibilité devient insuffisante.
+
+GitHub et Stack Exchange fonctionnent sans authentification pour les données publiques, avec des quotas plus faibles. `GITHUB_TOKEN` et `STACK_EXCHANGE_KEY` sont facultatifs, restent côté serveur et ne sont jamais envoyés au navigateur. Les APIs publiques possèdent leurs propres quotas : l'ensemble doit être protégé par un rate limiter partagé et de l'observabilité avant un usage SaaS important. Voir les [limites REST GitHub](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) et l'[authentification REST](https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api).
 
 Pour brancher une source réelle :
 
@@ -216,17 +229,17 @@ curl -X POST http://localhost:3000/api/analyze \
   -d '{"description":"A lightweight assistant that reconciles disputed ecommerce refunds for small operations teams.","targetCustomer":"Small ecommerce operations teams"}'
 ```
 
-La réponse porte `X-BuildCheck-Providers: mock` par défaut, l'identifiant configuré (`hacker-news`, `github` ou `hacker-news+github`) en mode live, `mock-external-consent-required` avant consentement, ou un suffixe `-fallback-mock` lorsque toutes les sources échouent. `X-BuildCheck-Evidence-Mode` distingue également `demo`, `live` et `fallback`.
+La réponse porte `X-BuildCheck-Providers: mock` par défaut, l'identifiant configuré (dont `public-web` pour l'agrégateur des huit adapters) en mode live, `mock-external-consent-required` avant consentement, ou un suffixe `-fallback-mock` lorsque toutes les sources échouent. `X-BuildCheck-Evidence-Mode` distingue également `demo`, `live` et `fallback`.
 
 ## Limites avant production
 
 Cette version est un produit de démonstration crédible, pas encore un SaaS multi-tenant exploitable publiquement. Restent notamment à brancher :
 
 - Supabase Auth et l'adapter de persistence ;
-- la supervision de HN Search et GitHub Search et, si nécessaire, le remplacement de l'adapter HN bêta par une ingestion interne ;
+- la supervision, le cache et les limites partagées des huit adapters publics et, si nécessaire, le remplacement de l'adapter HN bêta par une ingestion interne ;
 - un provider IA réel si les synthèses génératives sont souhaitées ;
 - un rate limiter partagé (Redis/Upstash ou équivalent) pour plusieurs instances ;
 - observabilité, alertes, politique de rétention et suppression de compte ;
 - tests E2E sur navigateur compatible WebMCP et environnement de déploiement final.
 
-La stratégie recommandée reste volontairement séquentielle : valider l'UX et le moteur mockés, puis connecter les vraies sources une par une.
+La stratégie de déploiement reste séquentielle : garder `mock` comme repli, activer `public-web` derrière le consentement explicite, puis mesurer la pertinence et les quotas de chaque source avant d'augmenter le trafic.

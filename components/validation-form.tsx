@@ -32,9 +32,23 @@ const steps = [
 ];
 
 function liveSourceCopy(dataSource: ServerDataSourceId): { label: string; domains: string; provider: string } {
-  if (dataSource === "hacker-news+github") return { label: "Hacker News + GitHub Issues", domains: "hn.algolia.com and api.github.com", provider: "Hacker News + GitHub Issues" };
-  if (dataSource === "github") return { label: "GitHub Issues", domains: "api.github.com", provider: "GitHub Issues" };
-  return { label: "Hacker News", domains: "hn.algolia.com", provider: "Hacker News" };
+  const sources: Record<Exclude<ServerDataSourceId, "mock">, { label: string; domains: string; provider: string }> = {
+    "hacker-news": { label: "Hacker News", domains: "hn.algolia.com", provider: "Hacker News" },
+    github: { label: "GitHub Issues", domains: "api.github.com", provider: "GitHub Issues" },
+    "hacker-news+github": { label: "Hacker News + GitHub Issues", domains: "hn.algolia.com and api.github.com", provider: "Hacker News + GitHub Issues" },
+    "stack-exchange": { label: "Stack Exchange", domains: "api.stackexchange.com", provider: "Stack Exchange" },
+    "apple-app-store": { label: "Apple App Store", domains: "itunes.apple.com", provider: "Apple App Store" },
+    mastodon: { label: "Mastodon", domains: "the configured public Mastodon instances", provider: "Mastodon" },
+    bluesky: { label: "Bluesky", domains: "public.api.bsky.app", provider: "Bluesky" },
+    rss: { label: "RSS/Atom feeds", domains: "the administrator-configured RSS hosts", provider: "RSS/Atom" },
+    npm: { label: "npm Registry", domains: "registry.npmjs.org", provider: "npm Registry" },
+    "public-web": {
+      label: "8 public connectors",
+      domains: "hn.algolia.com, api.github.com, api.stackexchange.com, itunes.apple.com, configured Mastodon/RSS hosts, public.api.bsky.app and registry.npmjs.org",
+      provider: "8 public connectors"
+    }
+  };
+  return dataSource === "mock" ? sources["hacker-news"] : sources[dataSource];
 }
 
 export function ValidationForm({ initialRoast = false, initialIdea, dataSource = "mock" }: { initialRoast?: boolean; initialIdea?: Partial<IdeaInput>; dataSource?: ServerDataSourceId }) {
@@ -81,7 +95,7 @@ export function ValidationForm({ initialRoast = false, initialIdea, dataSource =
           <span className="pulse-orb">{roast ? <Flame /> : <BrainCircuit />}</span>
           <span className="eyebrow">{t("Deterministic demo analysis")}</span>
           <h2 style={{ marginTop: 9 }}>{t(steps[step] || "Preparing recommendations")}</h2>
-          <p className="muted" style={{ maxWidth: 530 }}>{usesLiveSource && allowExternalLookup ? `${t("Live source queries are running with strict timeouts. Partial results stay live; total failure falls back to clearly labeled demo evidence.")} (${sourceCopy.label})` : t("The mock providers return immediately; this short sequence exposes the worker-ready pipeline without pretending to contact live sources.")}</p>
+          <p className="muted" style={{ maxWidth: 530 }}>{usesLiveSource && allowExternalLookup ? `${t("Live source queries are running with strict timeouts. Partial results stay live; total failure falls back to clearly labeled demo evidence.")} (${t(sourceCopy.label)})` : t("The mock providers return immediately; this short sequence exposes the worker-ready pipeline without pretending to contact live sources.")}</p>
         </div>
         <div className="progress-list">
           {steps.map((label, index) => (
@@ -129,10 +143,10 @@ export function ValidationForm({ initialRoast = false, initialIdea, dataSource =
       )}
 
       {error && <p role="alert" style={{ color: "var(--red)", margin: "14px 0 0", fontSize: 12 }}>{error}</p>}
-      {usesLiveSource && <label className="external-consent"><input type="checkbox" checked={allowExternalLookup} onChange={(event) => setAllowExternalLookup(event.target.checked)} /><span><strong>{t("Use live evidence from")} {sourceCopy.label}</strong><small>{t("Send up to three derived search keywords — not the full analysis — to")} {sourceCopy.domains}. {t("Public discussions will be linked and marked observed.")}</small></span></label>}
+      {usesLiveSource && <label className="external-consent"><input type="checkbox" checked={allowExternalLookup} onChange={(event) => setAllowExternalLookup(event.target.checked)} /><span><strong>{t("Use live evidence from")} {t(sourceCopy.label)}</strong><small>{t("Send up to three derived search keywords — not the full analysis — to")} {t(sourceCopy.domains)}. {t("Public evidence will be linked and marked observed.")}</small></span></label>}
       <div className="form-footer">
         <div className="stack" style={{ gap: 7 }}>
-          <span className="validation-note"><LockKeyhole /> {t("Providers")}{locale === "fr" ? " :" : ":"} {t("Mock AI")} + {usesLiveSource ? allowExternalLookup ? `${t("live")} ${sourceCopy.provider}` : t("mock until consent") : t("curated demo signals")}</span>
+          <span className="validation-note"><LockKeyhole /> {t("Providers")}{locale === "fr" ? " :" : ":"} {t("Mock AI")} + {usesLiveSource ? allowExternalLookup ? `${t("live")} ${t(sourceCopy.provider)}` : t("mock until consent") : t("curated demo signals")}</span>
           <button type="button" className={`button ghost ${roast ? "danger" : ""}`} onClick={() => setRoast((current) => !current)}><Flame /> {t(roast ? "Roast mode on" : "Roast my idea")}</button>
         </div>
         <button type="submit" className="button primary wide">{roast ? <Flame /> : <Sparkles />} {t(roast ? "Roast this idea" : "Analyze this idea")}</button>
@@ -145,13 +159,9 @@ export function ValidationExperience(props: { initialRoast?: boolean; initialIde
   const { t, locale } = useLanguage();
   const dataSource = props.dataSource || "mock";
   const usesLiveSource = dataSource !== "mock";
-  const liveSourceLabel = dataSource === "hacker-news+github"
-    ? "Hacker News and GitHub Issues"
-    : dataSource === "github"
-      ? "GitHub Issues"
-      : "Hacker News";
+  const liveSourceLabel = liveSourceCopy(dataSource).label;
   return <>
-    <header className="page-heading"><div><span className="eyebrow">{t("Validate")}</span><h1>{t("Pressure-test the idea before the build.")}</h1><p className="subtitle">{usesLiveSource ? (locale === "fr" ? `Votre description est structurée et notée par des fonctions déterministes, puis rapprochée de discussions observées sur ${liveSourceLabel}.` : `Your description is structured, matched to observed ${liveSourceLabel} discussions and scored by deterministic functions.`) : t("Your description is structured, matched to a transparent demo evidence set and scored by deterministic functions.")}</p></div></header>
+    <header className="page-heading"><div><span className="eyebrow">{t("Validate")}</span><h1>{t("Pressure-test the idea before the build.")}</h1><p className="subtitle">{usesLiveSource ? (locale === "fr" ? `Votre description est structurée et notée par des fonctions déterministes, puis rapprochée des preuves publiques de ${t(liveSourceLabel)}.` : `Your description is structured, matched to public evidence from ${liveSourceLabel} and scored by deterministic functions.`) : t("Your description is structured, matched to a transparent demo evidence set and scored by deterministic functions.")}</p></div></header>
     <ValidationForm {...props} />
     <p className="tiny" style={{ textAlign: "center", marginTop: 14 }}>{t(usesLiveSource ? "Only the configured public sources are queried. A partial failure keeps the remaining live evidence; total failure falls back to visibly marked demo data." : "Demo analyses never call Reddit, X, Google or an AI API. Evidence is simulated and visibly labeled.")}</p>
   </>;

@@ -57,3 +57,56 @@ export function inferSentiment(value: string): MarketSignal["sentiment"] {
   if (/\b(love|great|recommend|useful|works well)\b/i.test(value)) return "positive";
   return "neutral";
 }
+
+export function plainPublicText(value: string): string {
+  return value
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, "$1")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&quot;|&#34;/g, '"')
+    .replace(/&apos;|&#x27;|&#39;/gi, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#(\d+);/g, (_match, code: string) => String.fromCodePoint(Math.min(0x10ffff, Number(code))))
+    .replace(/&#x([0-9a-f]+);/gi, (_match, code: string) => String.fromCodePoint(Math.min(0x10ffff, Number.parseInt(code, 16))))
+    .replace(/[#>*_~|]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function excerptAroundTerms(value: string, terms: string[], limit = 360): string {
+  const text = plainPublicText(value).slice(0, 12_000);
+  const normalized = text.toLowerCase();
+  const firstMatch = terms
+    .map((term) => normalized.indexOf(term.toLowerCase()))
+    .filter((index) => index >= 0)
+    .sort((a, b) => a - b)[0];
+  const start = firstMatch === undefined ? 0 : Math.max(0, firstMatch - 90);
+  return text.slice(start, start + limit).trim();
+}
+
+export function safeEvidenceId(value: string): string {
+  return value.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 100);
+}
+
+export function isSafePublicHttpsUrl(value: string, allowedHosts?: string[]): boolean {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || !url.hostname || url.username || url.password) return false;
+    const hostname = url.hostname.toLowerCase();
+    if (
+      hostname === "localhost"
+      || hostname.endsWith(".local")
+      || hostname === "[::1]"
+      || /^\[(?:fc|fd|fe80):/i.test(hostname)
+      || /^(?:0\.|10\.|127\.|169\.254\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(hostname)
+    ) return false;
+    return !allowedHosts?.length || allowedHosts.some((host) => hostname === host || hostname.endsWith(`.${host}`));
+  } catch {
+    return false;
+  }
+}

@@ -19,4 +19,10 @@ describe("optional French localization", () => {
     expect(translateText("2 alternatives validate the category; recurring weaknesses create a possible wedge.", "fr"))
       .toContain("2 alternatives valident la catégorie");
   });
+
+  it("localizes the optional public connector settings", () => {
+    expect(translateText("8 public connectors", "fr")).toBe("8 connecteurs publics");
+    expect(translateText("RSS/Atom configured feeds", "fr")).toBe("Flux RSS/Atom configurés");
+    expect(translateText("available · feed config required", "fr")).toContain("configuration des flux requise");
+  });
 });

@@ -22,6 +22,8 @@ describe("HackerNewsDataSourceProvider", () => {
     expect(effectiveServerDataSource("hacker-news", true)).toBe("hacker-news");
     expect(effectiveServerDataSource("github", true)).toBe("github");
     expect(effectiveServerDataSource("hacker-news+github", true)).toBe("hacker-news+github");
+    expect(effectiveServerDataSource("public-web", false)).toBe("mock");
+    expect(effectiveServerDataSource("public-web", true)).toBe("public-web");
     expect(effectiveServerDataSource("mock", true)).toBe("mock");
   });
 
