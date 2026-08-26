@@ -394,6 +394,7 @@ td strong { color: var(--text); }
 .agent-status .dot { width: 8px; height: 8px; }
 .agent-status.available .dot { background: var(--green); box-shadow: 0 0 0 4px var(--green-soft); }
 .agent-status.unavailable .dot { background: var(--orange); box-shadow: 0 0 0 4px var(--orange-soft); }
+.challenge-setup-head > div { min-width: 0; }
 .agent-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 26px; margin-top: 22px; }
 .agent-flow-step { position: relative; min-height: 90px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-subtle); padding: 14px; }
 .agent-flow-step:not(:last-child)::after { content: "→"; position: absolute; right: -20px; top: 32px; color: var(--green); }
@@ -521,6 +522,7 @@ td strong { color: var(--text); }
   .agent-flow { grid-template-columns: 1fr; gap: 8px; }
   .agent-flow-step:not(:last-child)::after { content: "↓"; right: 20px; top: auto; bottom: -15px; z-index: 1; }
   .tool-grid { grid-template-columns: 1fr; }
+  .challenge-setup-head { align-items: flex-start !important; flex-direction: column; }
   .settings-nav { display: flex; overflow-x: auto; }
   .settings-nav button { white-space: nowrap; }
   .settings-panel { padding: 17px; }

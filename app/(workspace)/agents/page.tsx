@@ -66,7 +66,7 @@ export default function AgentsPage() {
       </section>
 
       <section className="card card-pad section">
-        <div className="row between" style={{ alignItems: "flex-start" }}>
+        <div className="row between challenge-setup-head" style={{ alignItems: "flex-start" }}>
           <div>
             <span className="eyebrow">{t("Challenge-ready setup")}</span>
             <h2 style={{ marginTop: 8 }}>{t("Use the supported Site tools environment.")}</h2>
