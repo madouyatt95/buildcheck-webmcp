@@ -26,7 +26,7 @@
 - [x] Publish the video publicly on YouTube — https://youtu.be/DAfWjhWVQGc
 - [x] Add the verified public repository URL to the Devpost copy
 - [x] Add the final public video URL to the Devpost copy
-- [ ] Save a Devpost draft and verify every field
+- [x] Save a Devpost draft and verify every field (DRAFT, 4/5 steps done)
 - [ ] Final user confirmation immediately before submission
 - [ ] Submit before Sep 3, 2026 at 1:00 pm PDT
 
@@ -41,3 +41,14 @@
 - Public watch page and playback verified; 1080p HD and automatic English captions are available. Copyright checks reported no issue at publication.
 - YouTube's public oEmbed endpoint returns the matching title and channel without authentication.
 - Final Devpost submission remains unperformed and still requires the user's confirmation.
+
+## Devpost draft — September 3
+
+- Project preview: https://devpost.com/software/buildcheck
+- Final review: https://devpost.com/submit-to/31011-the-webmcp-challenge/manage/submissions/1167972-buildcheck/finalization
+- Saved title, tagline, application icon, English story, five stack tags, and three links (live app, public repository, agent workspace).
+- Verified public YouTube video embed and two genuine product screenshots with English captions.
+- Saved the judge-facing URL, testing instructions, tested client, and AI-assistance disclosure.
+- Explicitly documented demo-user/local-storage/MockAIProvider limitations and optional connector availability.
+- Status remains **DRAFT, 4/5 steps done**. Final terms checkbox is unchecked; **Submit project has not been clicked**.
+- No personal questionnaire answers are stored in this repository.

@@ -30,7 +30,7 @@ The human workspace provides guided validation, reports, comparisons, opportunit
 - `find_opportunities`
 - `evaluate_before_build`
 
-An agent can challenge an idea, inspect a saved analysis, estimate the full-build scope, and propose the smallest validation MVP. A write-capable validation call creates a real project in the current workspace, so the founder can immediately continue in the dashboard.
+An agent can challenge an idea, inspect a saved analysis, estimate the full-build scope, and propose the smallest validation MVP. A write-capable validation call creates a project in the current browser workspace, so the founder can immediately continue in the dashboard.
 
 ## Why this is a strong fit for WebMCP
 
@@ -46,7 +46,7 @@ The interface also makes uncertainty honest. Generated summaries do not count as
 
 ## How people and agents collaborate
 
-People provide product judgment, consent to optional external research, and choose whether to invest. Agents handle the repetitive analytical chain: challenge the idea, retrieve the current analysis, calculate cost ranges, apply the pre-build guard, and propose a measurable validation MVP. Both use the same services and see the same persisted workspace state.
+People provide product judgment, consent to optional external research, and choose whether to invest. Agents handle the repetitive analytical chain: challenge the idea, retrieve the current analysis, calculate cost ranges, apply the pre-build guard, and propose a measurable validation MVP. Both use the same services and see the same locally persisted workspace state.
 
 This makes a useful interaction possible: “Should I build this?” can become a traceable project decision rather than an ungrounded chat answer.
 
@@ -56,7 +56,7 @@ BuildCheck uses Next.js 16, React 19, strict TypeScript, Zod, Tailwind CSS, and 
 
 The human UI, HTTP endpoint, and WebMCP handlers call the same domain services. The score, confidence model, verdicts, cost estimates, and ownership checks therefore have one implementation and one test suite.
 
-We started mock-first behind `AIProvider` and `DataSourceProvider` contracts so the complete product and UX work deterministically without third-party credentials. We then added an opt-in public evidence aggregator with eight interchangeable adapters. External lookup is explicit per analysis, sends only a few derived keywords, preserves source URLs and provenance, tolerates partial outages, and falls back to clearly labeled demo evidence only when every source fails.
+We started mock-first behind `AIProvider` and `DataSourceProvider` contracts so the complete product and UX work deterministically without third-party credentials. We then added an opt-in public evidence aggregator with eight interchangeable adapters. External lookup is explicit per analysis, sends only a few derived keywords, preserves source URLs and provenance, tolerates partial outages, and falls back to clearly labeled demo evidence only when every source fails. Adapter availability depends on the source; RSS requires configured feeds.
 
 ## Challenges
 
@@ -76,7 +76,9 @@ The hardest part was not registering seven functions; it was making agent action
 
 The most valuable agent tool is often a guardrail, not a generator. A reliable pre-build tool must be able to say “not enough evidence,” expose why, and recommend a cheaper experiment. WebMCP is especially compelling when it connects natural-language intent to an existing, inspectable product workflow instead of hiding logic in a remote black box.
 
-## What is next
+## Current scope and what is next
+
+This submission is a working demonstration, not a production multi-tenant SaaS. It uses a demo user, browser-local storage, and MockAIProvider. Demo evidence is labeled; optional public research is not a guarantee of market demand.
 
 Next we would add real authentication and durable multi-tenant persistence, shared rate limiting, connector observability and caching, evidence deduplication, and controlled A/B evaluation of live sources against the deterministic scenarios. Real AI providers remain optional because an LLM should summarize and challenge evidence, never invent proof or choose the final score.
 
@@ -96,3 +98,10 @@ Next we would add real authentication and durable multi-tenant persistence, shar
 - Agent workspace: https://buildcheck-webmcp.vercel.app/agents
 - Source code: https://github.com/madouyatt95/buildcheck-webmcp
 - Demo video: https://youtu.be/DAfWjhWVQGc
+- Devpost project preview: https://devpost.com/software/buildcheck
+
+## Devpost draft status — September 3, 2026
+
+The project overview, story, five technology tags, three project links, public YouTube embed, two captioned screenshots, and judge-facing technical information have been saved. Devpost shows **DRAFT, 4/5 steps done**. The preview renders the story, video, screenshots, and links correctly.
+
+The challenge submission is **not yet submitted**. Final confirmation and the final terms checkbox remain outstanding. Registration questionnaire answers are intentionally excluded from this repository.
