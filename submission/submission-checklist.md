@@ -19,10 +19,13 @@
 ## External publication
 
 - [x] Verify GitHub authentication with network access
-- [ ] Publish the repository and verify LICENSE detection
+- [x] Publish the repository and verify LICENSE detection (MIT, public, commit `6ca0c35`)
+- [x] Record a real 144.9-second product walkthrough and place it in the editable video timeline
+- [ ] Add synchronized English narration
 - [ ] Record and export a video under 3 minutes with audio
 - [ ] Publish the video publicly on YouTube
-- [ ] Add final repository and video URLs to the Devpost copy
+- [x] Add the verified public repository URL to the Devpost copy
+- [ ] Add the final public video URL to the Devpost copy
 - [ ] Save a Devpost draft and verify every field
 - [ ] Final user confirmation immediately before submission
 - [ ] Submit before Sep 3, 2026 at 1:00 pm PDT
