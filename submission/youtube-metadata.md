@@ -14,6 +14,8 @@ Source code: https://github.com/madouyatt95/buildcheck-webmcp
 
 Built for the 2026 WebMCP Challenge.
 
+This is a screen recording of the working application with AI-generated English narration (Peter). The walkthrough uses clearly labeled demo evidence. Public evidence adapters are optional and require consent.
+
 ## Visibility
 
 Public
@@ -25,3 +27,18 @@ No, it is not made for kids.
 ## Suggested tags
 
 WebMCP, AI agents, product validation, Next.js, OpenAI, developer tools, SaaS
+
+## Published video
+
+- URL: https://youtu.be/DAfWjhWVQGc
+- Channel: Yatta Yatta — https://www.youtube.com/@yattayatta760
+- Published: September 3, 2026
+- Visibility: Public
+- Duration: 2:25
+- Language: English
+- Category: Science & Technology
+- AI use: declared (generated narration)
+- YouTube copyright check: no issue detected at publication
+- Playback checked; 1080p HD is available and automatic English captions are present.
+- Public metadata verified through YouTube oEmbed without authentication.
+- External description links remain plain text until the channel completes YouTube's one-time verification; no additional verification was performed.

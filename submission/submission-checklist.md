@@ -23,9 +23,9 @@
 - [x] Record a real 144.9-second product walkthrough and place it in the editable video timeline
 - [x] Add synchronized English narration (Peter, 12 clips, all spoken endings preserved)
 - [x] Record and export a video under 3 minutes with audio (144.98 s, 1080p H.264, AAC stereo)
-- [ ] Publish the video publicly on YouTube
+- [x] Publish the video publicly on YouTube — https://youtu.be/DAfWjhWVQGc
 - [x] Add the verified public repository URL to the Devpost copy
-- [ ] Add the final public video URL to the Devpost copy
+- [x] Add the final public video URL to the Devpost copy
 - [ ] Save a Devpost draft and verify every field
 - [ ] Final user confirmation immediately before submission
 - [ ] Submit before Sep 3, 2026 at 1:00 pm PDT
@@ -37,4 +37,7 @@
 - Twelve English Peter narration clips, synchronized to the original 144.9-second capture; no music.
 - Export decoded completely without errors. Measured audio: −18.9 LUFS integrated, −3.1 dBFS true peak (no clipping).
 - Composed frames inspected at 10.0, 73.5 and 130.0 seconds; spoken ranges checked against all twelve source transcripts.
-- Public YouTube publication and final Devpost submission still require the user's confirmation. No public video URL exists yet.
+- Published publicly on the Yatta Yatta channel with user approval: https://youtu.be/DAfWjhWVQGc.
+- Public watch page and playback verified; 1080p HD and automatic English captions are available. Copyright checks reported no issue at publication.
+- YouTube's public oEmbed endpoint returns the matching title and channel without authentication.
+- Final Devpost submission remains unperformed and still requires the user's confirmation.

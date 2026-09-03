@@ -95,4 +95,4 @@ Next we would add real authentication and durable multi-tenant persistence, shar
 - Live application: https://buildcheck-webmcp.vercel.app
 - Agent workspace: https://buildcheck-webmcp.vercel.app/agents
 - Source code: https://github.com/madouyatt95/buildcheck-webmcp
-- Demo video: TO_BE_ADDED_AFTER_PUBLICATION
+- Demo video: https://youtu.be/DAfWjhWVQGc
