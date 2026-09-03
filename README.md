@@ -1,5 +1,7 @@
 # BuildCheck
 
+[English documentation](./README.en.md) · [Live demo](https://buildcheck-webmcp.vercel.app) · [WebMCP agent workspace](https://buildcheck-webmcp.vercel.app/agents)
+
 BuildCheck est un SaaS mobile-first de validation produit : il mesure la demande, la douleur, la volonté de payer, la distribution, la concurrence, la simplicité de construction et la défensibilité **avant** d'investir dans un produit complet.
 
 Cette livraison est volontairement **mock-first**. Le moteur, l'UX, les contrats de providers, les sorties structurées et l'intégration WebMCP fonctionnent sans Reddit, X, Google, OpenAI ou Supabase. Aucune donnée de démonstration n'est présentée comme une observation en direct.

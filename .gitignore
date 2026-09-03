@@ -23,3 +23,6 @@
 .DS_Store
 *.pem
 *.tsbuildinfo
+
+# submission renders
+/submission/exports/
