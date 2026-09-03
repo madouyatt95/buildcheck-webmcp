@@ -104,4 +104,4 @@ Next we would add real authentication and durable multi-tenant persistence, shar
 
 The project overview, story, five technology tags, three project links, public YouTube embed, two captioned screenshots, and judge-facing technical information have been saved. Devpost shows **DRAFT, 4/5 steps done**. The preview renders the story, video, screenshots, and links correctly.
 
-The challenge submission is **not yet submitted**. Final confirmation and the final terms checkbox remain outstanding. Registration questionnaire answers are intentionally excluded from this repository.
+The challenge submission is now **submitted**. Devpost confirmed “Project submitted!” and the public project page is live. Registration questionnaire answers are intentionally excluded from this repository.
